@@ -26,6 +26,31 @@ function normalizeSheetDate(raw) {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 }
 
+// Sheet may say "Book Fair" / "book club"; calendar keys are fair, club, etc.
+function normalizeEventType(raw) {
+  const key = (raw || '').trim().toLowerCase().replace(/[\s_-]+/g, ' ');
+  if (!key) return 'reading';
+  const aliases = new Map([
+    ['book club', 'club'],
+    ['bookclub', 'club'],
+    ['club', 'club'],
+    ['book fair', 'fair'],
+    ['bookfair', 'fair'],
+    ['fair', 'fair'],
+    ['book launch', 'launch'],
+    ['booklaunch', 'launch'],
+    ['launch', 'launch'],
+    ['workshop', 'workshop'],
+    ['reading', 'reading'],
+  ]);
+  if (aliases.has(key)) return aliases.get(key);
+  const compact = key.replace(/\s/g, '');
+  for (const [alias, canon] of aliases) {
+    if (alias.replace(/\s/g, '') === compact) return canon;
+  }
+  return 'reading';
+}
+
 function parseCsv(csvText) {
   // Google Sheets CSV uses CRLF (\r\n). split('\n') leaves \r on every line, so
   // e.g. published becomes "TRUE\r" and fails the === 'TRUE' check — no events.
@@ -57,7 +82,7 @@ function parseCsv(csvText) {
     .map(row => ({
       id:         row.id         || Math.random().toString(36).slice(2),
       date:       normalizeSheetDate(row.date || ''),
-      type:       (row.type      || 'reading').toLowerCase(),
+      type:       normalizeEventType(row.type || ''),
       title:      row.title      || '',
       venue:      row.venue      || '',
       time:       row.time       || '',   // e.g. "5:00 PM"
@@ -67,7 +92,7 @@ function parseCsv(csvText) {
 }
 
 // ── Cache ─────────────────────────────────────────────────────────────────────
-const CACHE_KEY = 'abc_events_v2';
+const CACHE_KEY = 'abc_events_v3';
 
 function getCached() {
   try {

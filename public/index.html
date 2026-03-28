@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Accra Book Calendar — Literary Events in Accra</title>
+  <meta name="description" content="The home of literary events in Accra. Book launches, readings, book clubs, fairs and workshops — all in one place." />
+  <meta property="og:title" content="Accra Book Calendar" />
+  <meta property="og:description" content="Literary events in Accra — book launches, readings, clubs, fairs and workshops." />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <div class="app" id="app">
+
+    <!-- HEADER -->
+    <header class="hdr">
+      <div class="logo">
+        Accra Book Calendar
+        <em>literary events in Accra</em>
+      </div>
+      <div class="hdr-right">
+        <nav class="nav" aria-label="Month navigation">
+          <button id="prev" aria-label="Previous month">&#8249;</button>
+          <div class="nav-lbl" id="month-label" aria-live="polite"></div>
+          <button id="next" aria-label="Next month">&#8250;</button>
+        </nav>
+        <button class="wa-btn" id="wa-btn" aria-label="Add an event via WhatsApp">
+          <span class="wa-dot" aria-hidden="true"></span>+ event
+        </button>
+      </div>
+    </header>
+
+    <!-- FILTERS -->
+    <div class="filters" id="filters" role="group" aria-label="Filter by event type"></div>
+
+    <!-- BODY -->
+    <div class="body">
+
+      <!-- CALENDAR -->
+      <main class="cal-wrap">
+        <div class="wk-row" aria-hidden="true">
+          <div class="wk-lbl">Sun</div>
+          <div class="wk-lbl">Mon</div>
+          <div class="wk-lbl">Tue</div>
+          <div class="wk-lbl">Wed</div>
+          <div class="wk-lbl">Thu</div>
+          <div class="wk-lbl">Fri</div>
+          <div class="wk-lbl">Sat</div>
+        </div>
+        <div class="grid" id="grid" role="grid" aria-label="Calendar"></div>
+
+        <!-- Loading / error states -->
+        <div class="state-msg" id="loading-msg">Loading events&hellip;</div>
+        <div class="state-msg state-error" id="error-msg" style="display:none;">
+          Could not load events. <button onclick="loadEvents()">Retry</button>
+        </div>
+      </main>
+
+      <!-- SIDEBAR -->
+      <aside class="sidebar" id="sidebar" aria-label="Event details">
+        <div class="sb-lbl" id="sb-label">Select a date</div>
+        <div id="sb-body">
+          <p class="sb-empty">Tap any date to see events.</p>
+        </div>
+      </aside>
+
+    </div><!-- /.body -->
+
+  </div><!-- /.app -->
+
+  <!-- WHATSAPP MODAL -->
+  <div class="modal-backdrop" id="wa-modal" role="dialog" aria-modal="true" aria-labelledby="wa-modal-title" style="display:none;">
+    <div class="modal">
+      <button class="modal-close" id="wa-close" aria-label="Close">&times;</button>
+      <div class="modal-title" id="wa-modal-title">Add an event to the calendar</div>
+      <p class="modal-body">
+        Accra Book Calendar is community-curated. Join our WhatsApp group to share an upcoming book event — post a poster, a flyer, or just the details as text. We review and publish to the calendar.
+      </p>
+      <a class="modal-wa-link" id="wa-link" href="#" target="_blank" rel="noopener">
+        <span class="wa-dot-lg"></span>
+        Join the WhatsApp group
+      </a>
+      <p class="modal-note">
+        Please include: event name, date, time, venue, and organiser.
+      </p>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/ics.js"></script>
+  <script src="js/calendar.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>

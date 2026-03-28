@@ -27,8 +27,11 @@ function normalizeSheetDate(raw) {
 }
 
 function parseCsv(csvText) {
-  const lines   = csvText.trim().split('\n');
-  const headers = lines[0].split(',').map(h => h.trim().toLowerCase().replace(/\s+/g, '_'));
+  // Google Sheets CSV uses CRLF (\r\n). split('\n') leaves \r on every line, so
+  // e.g. published becomes "TRUE\r" and fails the === 'TRUE' check — no events.
+  const normalized = csvText.trim().replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+  const lines      = normalized.split('\n').filter(line => line.length);
+  const headers    = lines[0].split(',').map(h => h.trim().toLowerCase().replace(/\s+/g, '_'));
 
   return lines.slice(1)
     .map(line => {
@@ -64,7 +67,7 @@ function parseCsv(csvText) {
 }
 
 // ── Cache ─────────────────────────────────────────────────────────────────────
-const CACHE_KEY = 'abc_events_v1';
+const CACHE_KEY = 'abc_events_v2';
 
 function getCached() {
   try {

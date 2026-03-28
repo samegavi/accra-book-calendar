@@ -8,6 +8,24 @@
 //
 // "published" column: set to TRUE to show the event, anything else = hidden.
 
+// Google Sheets often exports dates as "April 5, 2026" (or regional variants).
+// The calendar grid and ICS layer expect strict YYYY-MM-DD.
+function normalizeSheetDate(raw) {
+  if (!raw) return '';
+  const s = String(raw).trim();
+  if (/^\d{4}-\d{1,2}-\d{1,2}$/.test(s)) {
+    const [y, m, d] = s.split('-').map(n => parseInt(n, 10));
+    if (!y || !m || !d) return '';
+    const pad = n => String(n).padStart(2, '0');
+    return `${y}-${pad(m)}-${pad(d)}`;
+  }
+  const t = Date.parse(s.replace(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/, '$2/$1/$3'));
+  if (Number.isNaN(t)) return '';
+  const d = new Date(t);
+  const pad = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
 function parseCsv(csvText) {
   const lines   = csvText.trim().split('\n');
   const headers = lines[0].split(',').map(h => h.trim().toLowerCase().replace(/\s+/g, '_'));
@@ -35,7 +53,7 @@ function parseCsv(csvText) {
     })
     .map(row => ({
       id:         row.id         || Math.random().toString(36).slice(2),
-      date:       row.date       || '',   // YYYY-MM-DD
+      date:       normalizeSheetDate(row.date || ''),
       type:       (row.type      || 'reading').toLowerCase(),
       title:      row.title      || '',
       venue:      row.venue      || '',

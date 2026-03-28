@@ -12,10 +12,12 @@
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
+# Do not use long immutable cache for JS: this app is config- and data-driven,
+# and stale bundles hid sheet/config updates after deploy.
 [[headers]]
   for = "/js/*"
   [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
+    Cache-Control = "public, max-age=0, must-revalidate"
 
 # Redirect all paths to index.html (single-page app)
 [[redirects]]
